@@ -1,0 +1,9 @@
+npm install
+
+npm install axios zustand @tanstack/react-query react-router-dom recharts
+
+npm install tailwindcss @tailwindcss/vite
+
+npm install class-variance-authority clsx tailwind-merge
+
+npm install lucide-react

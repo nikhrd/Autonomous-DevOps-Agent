@@ -1,0 +1,13 @@
+pip install fastapi uvicorn sqlalchemy pydantic python-dotenv
+
+pip install websockets
+
+pip install loguru
+
+pip install gitpython pygithub
+
+pip install langgraph
+
+pip install openai
+
+pip install flake8 mypy pylint pytest
