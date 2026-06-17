@@ -14,40 +14,40 @@ from app.tools.syntax_checker import (
 class Analyzer:
 
     def __init__(self):
+        self.errors = []
+
+    def analyze_repository(self, repo_path):
 
         self.errors = []
 
-    def analyze_repository(
-        self,
-        repo_path
-    ):
+        self.run_syntax_checks(repo_path)
+        self.run_flake8_checks(repo_path)
+        self.run_mypy_checks(repo_path)
+        self.run_pylint_checks(repo_path)
 
-        self.errors = []
+        # Remove duplicates
+        seen = set()
+        unique_errors = []
 
-        self.run_syntax_checks(
-            repo_path
-        )
+        for error in self.errors:
 
-        self.run_flake8_checks(
-            repo_path
-        )
+            key = (
+                error["file"],
+                error["line"],
+                error["description"]
+            )
 
-        self.run_mypy_checks(
-            repo_path
-        )
+            if key not in seen:
+                seen.add(key)
+                unique_errors.append(error)
 
-        self.run_pylint_checks(
-            repo_path
-        )
+        self.errors = unique_errors
 
         return {
             "errors": self.errors
         }
 
-    def run_syntax_checks(
-        self,
-        repo_path
-    ):
+    def run_syntax_checks(self, repo_path):
 
         for file in Path(repo_path).rglob("*.py"):
 
@@ -57,7 +57,7 @@ class Analyzer:
 
                 self.errors.append(
                     {
-                        "file": str(file),
+                        "file": str(Path(file).resolve()),
                         "line": result["line"],
                         "bug_type": "SYNTAX",
                         "description": result["message"],
@@ -66,68 +66,126 @@ class Analyzer:
                     }
                 )
 
-    def run_flake8_checks(
-        self,
-        repo_path
-    ):
+    def run_flake8_checks(self, repo_path):
 
-        output = run_flake8(
-            repo_path
-        )
+        output = run_flake8(repo_path)
 
         for line in output:
 
-            self.errors.append(
-                {
-                    "file": line,
-                    "line": 0,
-                    "bug_type": "LINTING",
-                    "description": line,
-                    "severity": "warning",
-                    "raw_message": line
-                }
-            )
+            try:
 
-    def run_mypy_checks(
-        self,
-        repo_path
-    ):
+                # Example:
+                # test_repo/broken.py:1:1: F401 'os' imported but unused
 
-        output = run_mypy(
-            repo_path
-        )
+                parts = line.split(":", 3)
 
-        for line in output:
+                if len(parts) < 4:
+                    continue
 
-            self.errors.append(
-                {
-                    "file": line,
-                    "line": 0,
-                    "bug_type": "TYPE_ERROR",
-                    "description": line,
-                    "severity": "warning",
-                    "raw_message": line
-                }
-            )
+                file_path = parts[0]
+                line_no = int(parts[1])
 
-    def run_pylint_checks(
-        self,
-        repo_path
-    ):
+                message = parts[3].strip()
 
-        output = run_pylint(
-            repo_path
-        )
+                self.errors.append(
+                    {
+                        "file": str(Path(file_path).resolve()),
+                        "line": line_no,
+                        "bug_type": "LINTING",
+                        "description": message,
+                        "severity": "warning",
+                        "raw_message": line
+                    }
+                )
+
+            except Exception:
+                continue
+
+    def run_mypy_checks(self, repo_path):
+
+        output = run_mypy(repo_path)
 
         for line in output:
 
-            self.errors.append(
-                {
-                    "file": line,
-                    "line": 0,
-                    "bug_type": "LOGIC",
-                    "description": line,
-                    "severity": "warning",
-                    "raw_message": line
-                }
-            )
+            if not line.strip():
+                continue
+
+            if line.startswith("Success"):
+                continue
+
+            try:
+
+                # Example:
+                # test_repo/file.py:10: error: Incompatible types ...
+
+                parts = line.split(":", 3)
+
+                if len(parts) < 4:
+                    continue
+
+                file_path = parts[0]
+                line_no = int(parts[1])
+
+                message = parts[3].strip()
+
+                self.errors.append(
+                    {
+                        "file": str(Path(file_path).resolve()),
+                        "line": line_no,
+                        "bug_type": "TYPE_ERROR",
+                        "description": message,
+                        "severity": "warning",
+                        "raw_message": line
+                    }
+                )
+
+            except Exception:
+                continue
+
+    def run_pylint_checks(self, repo_path):
+
+        output = run_pylint(repo_path)
+
+        for line in output:
+
+            if not line.strip():
+                continue
+
+            # Skip pylint banners
+            if line.startswith("*************"):
+                continue
+
+            if "rated at" in line:
+                continue
+
+            if "-----" in line:
+                continue
+
+            try:
+
+                # Example:
+                # test_repo/broken.py:1:0: W0611: Unused import os (unused-import)
+
+                parts = line.split(":", 4)
+
+                if len(parts) < 5:
+                    continue
+
+                file_path = parts[0]
+                line_no = int(parts[1])
+
+                message = parts[4].strip()
+
+                self.errors.append(
+                    {
+                        "file": str(Path(file_path).resolve()),
+                        "line": line_no,
+                        "bug_type": "LOGIC",
+                        "description": message,
+                        "severity": "warning",
+                        "raw_message": line
+                    }
+                )
+
+            except Exception:
+                continue
