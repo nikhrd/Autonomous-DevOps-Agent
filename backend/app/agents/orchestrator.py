@@ -18,6 +18,10 @@ from app.agents.state import (
     AgentState
 )
 
+from app.agents.ci_executor import (
+    CIExecutor
+)
+
 MAX_RETRIES = int(
     os.getenv(
         "MAX_RETRIES",
@@ -27,6 +31,7 @@ MAX_RETRIES = int(
 analyzer = Analyzer()
 fixer = FixGenerator()
 runner = TestRunner()
+ci_executor = CIExecutor()
 
 def analyze_node(
     state: AgentState
@@ -78,6 +83,37 @@ def route_result(
 
     return "retry"
 
+def cicd_node(
+    state
+):
+
+    result = ci_executor.execute(
+        state["repo_url"],
+        state["repo_path"]
+    )
+
+    state["cicd_status"] = (
+        result["status"]
+    )
+
+    state["cicd_runs"].append(
+        {
+            "iteration":
+                state["retries"] + 1,
+
+            "status":
+                result["status"],
+
+            "timestamp":
+                result.get(
+                    "updated_at",
+                    "LOCAL"
+                )
+        }
+    )
+
+    return state
+
 graph = StateGraph(
     AgentState
 )
@@ -97,6 +133,11 @@ graph.add_node(
     test_node
 )
 
+graph.add_node(
+    "cicd",
+    cicd_node
+)
+
 graph.set_entry_point(
     "analyze"
 )
@@ -111,8 +152,13 @@ graph.add_edge(
     "test"
 )
 
-graph.add_conditional_edges(
+graph.add_edge(
     "test",
+    "cicd"
+)
+
+graph.add_conditional_edges(
+    "cicd",
     route_result,
     {
         "retry": "analyze",

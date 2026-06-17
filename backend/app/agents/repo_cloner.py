@@ -22,7 +22,8 @@ class RepoCloner:
         clone_path = self.workspace / run_id
 
         if clone_path.exists():
-            shutil.rmtree(clone_path)
+            print(f"Repository already exists at {clone_path}")
+            return clone_path
 
         Repo.clone_from(
             repo_url,

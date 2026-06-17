@@ -9,3 +9,5 @@ class AgentState(
     retries: int
     fixed_count: int
     test_passed: bool
+    cicd_runs: list
+    cicd_status: str
