@@ -11,3 +11,5 @@ class AgentState(
     test_passed: bool
     cicd_runs: list
     cicd_status: str
+    start_time: str
+    end_time: str

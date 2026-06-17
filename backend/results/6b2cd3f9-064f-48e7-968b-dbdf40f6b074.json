@@ -1,0 +1,36 @@
+{
+    "run_id": "6b2cd3f9-064f-48e7-968b-dbdf40f6b074",
+    "team_name": "RIFT",
+    "leader_name": "Nik",
+    "repo_url": "https://github.com/pallets/flask",
+    "branch": "AI_FIX_BRANCH",
+    "start_time": "2026-06-17T07:30:40.672051",
+    "end_time": "2026-06-17T07:30:40.685836",
+    "total_time_seconds": 0,
+    "total_failures": 1,
+    "total_fixes": 1,
+    "commit_count": 1,
+    "cicd_status": "PASSED",
+    "score": {
+        "base": 100,
+        "speed_bonus": 10,
+        "efficiency_penalty": 0,
+        "total": 110
+    },
+    "fixes": [
+        {
+            "file": "app.py",
+            "bug_type": "SYNTAX",
+            "line": 10,
+            "commit_message": "[AI-AGENT] Fix SYNTAX",
+            "status": "FIXED"
+        }
+    ],
+    "cicd_runs": [
+        {
+            "iteration": 1,
+            "status": "PASSED",
+            "timestamp": "2026-06-17T07:30:40.685840"
+        }
+    ]
+}

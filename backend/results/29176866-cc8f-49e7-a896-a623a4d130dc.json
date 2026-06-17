@@ -1,0 +1,36 @@
+{
+    "run_id": "29176866-cc8f-49e7-a896-a623a4d130dc",
+    "team_name": "IRFT",
+    "leader_name": "Nik",
+    "repo_url": "https://github.com/test/repo",
+    "branch": "AI_FIX_BRANCH",
+    "start_time": "2026-06-17T08:25:49.231424",
+    "end_time": "2026-06-17T08:25:49.236082",
+    "total_time_seconds": 0,
+    "total_failures": 1,
+    "total_fixes": 1,
+    "commit_count": 1,
+    "cicd_status": "PASSED",
+    "score": {
+        "base": 100,
+        "speed_bonus": 10,
+        "efficiency_penalty": 0,
+        "total": 110
+    },
+    "fixes": [
+        {
+            "file": "app.py",
+            "bug_type": "SYNTAX",
+            "line": 10,
+            "commit_message": "[AI-AGENT] Fix SYNTAX",
+            "status": "FIXED"
+        }
+    ],
+    "cicd_runs": [
+        {
+            "iteration": 1,
+            "status": "PASSED",
+            "timestamp": "2026-06-17T08:25:49.236087"
+        }
+    ]
+}

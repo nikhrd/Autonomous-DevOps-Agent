@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware #to recitfy cors access error
 from app.models.database import engine
 from app.models.schemas import Base
 from app.routers.agent import router as agent_router
@@ -18,6 +18,19 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Project Rift Backend"
+)
+app.add_middleware(
+    CORSMiddleware,
+
+    allow_origins=[
+        "http://localhost:5173"
+    ],
+
+    allow_credentials=True,
+
+    allow_methods=["*"],
+
+    allow_headers=["*"],
 )
 app.include_router(
     agent_router,

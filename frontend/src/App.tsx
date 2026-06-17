@@ -1,14 +1,39 @@
-function App() {
+import InputSection
+from "./components/InputSection";
+
+import Dashboard
+from "./components/Dashboard";
+
+export default function App() {
+
   return (
+
     <div
-      style={{
-        padding: "40px",
-        fontSize: "24px"
-      }}
+      className="
+      p-6
+      max-w-7xl
+      mx-auto"
     >
-      Project Rift Dashboard
+
+      <h1
+        className="
+        text-4xl
+        font-bold
+        mb-6"
+      >
+        Autonomous DevOps Agent
+      </h1>
+
+      <InputSection />
+
+      <div
+        className="mt-6"
+      >
+
+        <Dashboard />
+
+      </div>
+
     </div>
   );
 }
-
-export default App;

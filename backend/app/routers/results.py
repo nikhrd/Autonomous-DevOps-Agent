@@ -2,6 +2,7 @@ from fastapi import (
     APIRouter,
     Depends
 )
+import json
 
 from sqlalchemy.orm import Session
 
@@ -34,7 +35,9 @@ def get_result(
         .first()
     )
 
-    return run
+    return json.loads(
+        run.results_json
+    )
 @router.get("/runs")
 def list_runs(
     db: Session = Depends(

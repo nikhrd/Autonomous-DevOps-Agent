@@ -2,6 +2,8 @@ from git import Repo
 
 
 class GitAgent:
+    def init():
+        self.commit_count = 0
 
     def create_branch(
         self,
@@ -31,6 +33,7 @@ class GitAgent:
         commit = repo.index.commit(
             message
         )
+        self.commit_count += 1
 
         return commit.hexsha
 
@@ -49,3 +52,6 @@ class GitAgent:
         origin.push(branch_name)
 
         return True
+    
+    def get_commit_count(self):
+        return self.commit_count

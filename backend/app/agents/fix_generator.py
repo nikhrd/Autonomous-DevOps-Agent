@@ -8,6 +8,7 @@ class FixGenerator:
 
     def __init__(self):
         self.llm = LLMClient()
+        self.applied_fixes = []
     
     
     def apply_fix(self, error):
@@ -50,5 +51,25 @@ class FixGenerator:
             fixed,
             encoding="utf-8"
         )
+        self.applied_fixes.append(
+        {
+        "file":
+            str(file_path),
+
+        "bug_type":
+            error["bug_type"],
+
+        "line":
+            error["line"],
+
+        "commit_message":
+            f"[AI-AGENT] Fix {error['bug_type']}",
+
+        "status":
+            "FIXED"
+        })
 
         return True
+    
+    def get_fixes(self):
+        return self.applied_fixes
